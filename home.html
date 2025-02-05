@@ -83,7 +83,7 @@ import { get, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-
                 const userRef = ref(db, 'users/' + user.uid);
                 
                 // إعداد خاصية الحذف عند قطع الاتصال
-                onDisconnect(userRef).remove();
+                //onDisconnect(userRef).remove();
 
                 // تعيين دالة الحفظ للوصول العام
                 window.saveToDB = (lat, lng, speed) => {
