@@ -1,8 +1,3 @@
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -13,7 +8,6 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 
     <link rel="stylesheet" href="main.css"/></head>
 <body>
@@ -45,68 +39,96 @@
 
 
 
+
+
+
+
+
+
+
+
+
+    
+
     <!-- Firebase و Leaflet scripts -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-import { getDatabase, ref, update, onDisconnect } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+    import { getDatabase, ref, update, onDisconnect } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
-// تكوين Firebase
-const firebaseConfig = {
-    apiKey: "AIzaSyB9ZqQCZG9g3qclDz-kLHrNQparJT_iBXc",
-    authDomain: "mypro-d8761.firebaseapp.com",
-    databaseURL: "https://mypro-d8761-default-rtdb.firebaseio.com",
-    projectId: "mypro-d8761",
-    storageBucket: "mypro-d8761.appspot.com",
-    messagingSenderId: "439741574644",
-    appId: "1:439741574644:web:50b693546c7d32a5579da1"
-};
+    // داخل script type="module"
+import { get, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
-// تهيئة التطبيق
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getDatabase(app);
-
-// إدارة حالة المستخدم
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        console.log("المستخدم مسجل دخول:", user.uid);
-        const userRef = ref(db, 'users/' + user.uid);
-        
-        // إعداد خاصية الحذف عند قطع الاتصال
-        onDisconnect(userRef).remove();
-
-        // تعيين دالة الحفظ للوصول العام
-        window.saveToDB = (lat, lng, speed) => {
-            console.log("حفظ البيانات للمستخدم:", user.uid, { lat, lng, speed });
-
-            update(userRef, {
-                latitude: lat,
-                longitude: lng,
-                speed: speed,
-                timestamp: Date.now()
-            }).then(() => {
-                console.log("تم حفظ البيانات بنجاح");
-            }).catch((error) => {
-                console.error('خطأ في حفظ البيانات:', error);
-            });
+        // تكوين Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyB9ZqQCZG9g3qclDz-kLHrNQparJT_iBXc",
+            authDomain: "mypro-d8761.firebaseapp.com",
+            databaseURL: "https://mypro-d8761-default-rtdb.firebaseio.com",
+            projectId: "mypro-d8761",
+            storageBucket: "mypro-d8761.appspot.com",
+            messagingSenderId: "439741574644",
+            appId: "1:439741574644:web:50b693546c7d32a5579da1"
         };
-    } else {
-        window.location.href = "login.html";
-    }
+
+        // تهيئة التطبيق
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        // إدارة حالة المستخدم
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                console.log("المستخدم مسجل دخول:", user.uid);
+                const userRef = ref(db, 'users/' + user.uid);
+                
+                // إعداد خاصية الحذف عند قطع الاتصال
+                onDisconnect(userRef).remove();
+
+                // تعيين دالة الحفظ للوصول العام
+                window.saveToDB = (lat, lng, speed) => {
+                    console.log("حفظ البيانات للمستخدم:", user.uid, { lat, lng, speed });
+
+                    update(userRef, {
+                        latitude: lat,
+                        longitude: lng,
+                        speed: speed,
+                        timestamp: Date.now()
+                    }).then(() => {
+                        console.log("تم حفظ البيانات بنجاح");
+                    }).catch((error) => {
+                        console.error('خطأ في حفظ البيانات:', error);
+                    });
+
+
+                    // إضافة مستمع لتحديثات بيانات المستخدم
+onValue(userRef, (snapshot) => {
+    const userData = snapshot.val();
+    window.userInfo = {
+        username: userData?.username || 'غير معروف',
+        email: user.email,
+        speed: userData?.speed || 0,
+        coords: userData ? [userData.latitude, userData.longitude] : [0, 0]
+    };
 });
 
-// تسجيل الخروج
-document.querySelector('.logout-btn').addEventListener('click', async () => {
-    try {
-        await signOut(auth);
-        window.location.href = 'login.html';
-    } catch (error) {
-        console.error("خطأ في تسجيل الخروج:", error);
-        alert("حدث خطأ أثناء محاولة تسجيل الخروج");
-    }
-});
+
+                };
+            } else {
+                window.location.href = "login.html";
+            }
+        });
+
+        // تسجيل الخروج
+        document.querySelector('.logout-btn').addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'login.html';
+            } catch (error) {
+                console.error("خطأ في تسجيل الخروج:", error);
+                alert("حدث خطأ أثناء محاولة تسجيل الخروج");
+            }
+        });
 
     </script>
 
@@ -164,25 +186,23 @@ const redPulseIcon = L.divIcon({
 
 
 
+    function updateLocation(position) {
+    const lat = position.coords.latitude;
+    const lng = position.coords.longitude;
+    const speed = position.coords.speed * 3.6;
 
-        function updateLocation(position) {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-            const speed = position.coords.speed * 3.6;
+    currentPosition = { lat, lng };
 
-            currentPosition = { lat, lng };
+    if (!marker) {
+        marker = L.marker([lat, lng], { icon: redPulseIcon })
+            .bindPopup(createPopupContent(speed, lat, lng))
+            .addTo(map);
+    } else {
+        marker.setLatLng([lat, lng])
+            .setPopupContent(createPopupContent(speed, lat, lng));
+    }
 
 
-
-
-            
-
-if (!marker) {
-    // استخدام الرمز النابض بدلاً من العلامة الافتراضية
-    marker = L.marker([lat, lng], { icon: redPulseIcon }).addTo(map);
-} else {
-    marker.setLatLng([lat, lng]);
-}
 
 path.push([lat, lng]);
 
@@ -195,10 +215,6 @@ if (isFirstUpdate) {
     map.setView([lat, lng], 13);
     isFirstUpdate = false;
 }
-
-
-
-
 
 
             // حفظ البيانات في Firebase
@@ -247,13 +263,22 @@ function focusOnLocation() {
 document.getElementById('centerButton').addEventListener('click', focusOnLocation);
 
         // ... (بقية الدوال والأحداث كما هي) ...
+
+
+        function createPopupContent(speed, lat, lng) {
+    return `
+        <div dir="rtl" style="text-align: right;">
+            <h4 style="margin: 5px 0;">معلومات المستخدم</h4>
+            <hr style="margin: 5px 0;">
+            <b>الاسم:</b> ${window.userInfo?.username || 'غير معروف'}<br>
+            <b>الإيميل:</b> ${window.userInfo?.email || 'غير معروف'}<br>
+            <b>السرعة:</b> ${speed.toFixed(1)} كم/س<br>
+            <b>الإحداثيات:</b><br>
+            ${lat.toFixed(6)}, ${lng.toFixed(6)}
+        </div>
+    `;
+}
     </script>
-
-
-
-
-
-
 
 
 
