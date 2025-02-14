@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تسجيل الدخول</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- نموذج تسجيل الدخول -->
+        <div id="main">
+          <h1>تسجيل الدخول</h1>
+          <div class="error-message">خطأ في البريد الإلكتروني أو كلمة المرور</div>
+          
+          <div class="form-group">
+            <input id="email" type="email" placeholder="البريد الإلكتروني" required>
+          </div>
+          
+          <div class="form-group">
+            <input id="password" type="password" placeholder="كلمة المرور" required>
+          </div>
+          
+          <button id="submit" type="button">إرسال</button>
+          
+          <div class="separator">أو</div>
+          
+          <button id="sign-up">إنشاء حساب جديد</button>
+        </div>
+    
+        <!-- نموذج إنشاء حساب -->
+        <div id="create-acct">
+          <h1>إنشاء حساب جديد</h1>
+          <div class="error-message">يجب ملء جميع الحقول المطلوبة</div>
+    
+          <div class="form-group">
+            <input id="username-signup" type="text" placeholder="اسم المستخدم *" required>
+          </div>
+          
+          <div class="form-group">
+            <input id="email-signup" type="email" placeholder="البريد الإلكتروني *" required>
+          </div>
+          
+          <div class="form-group">
+            <input id="confirm-email-signup" type="email" placeholder="تأكيد البريد الإلكتروني *" required>
+          </div>
+          
+          <div class="form-group">
+            <input id="password-signup" type="password" placeholder="كلمة المرور *" required>
+          </div>
+          
+          <div class="form-group">
+            <input id="confirm-password-signup" type="password" placeholder="تأكيد كلمة المرور *" required>
+          </div>
+    
+          <button id="create-acct-btn">إنشاء حساب</button>
+          <button id="return-btn">العودة لتسجيل الدخول</button>
+        </div>
+      </div>
+      
+      <script type="module" src="js/auth.js"></script>
+</body>
+</html>
